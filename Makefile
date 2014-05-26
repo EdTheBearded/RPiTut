@@ -1,64 +1,63 @@
-###############################################################################
-#	makefile
-#	 by Alex Chadwick
-#
-#	A makefile script for generation of raspberry pi kernel images.
-###############################################################################
+
+
+# based on the Makefile by Alex Chadwick 
+#    for generation of raspberry pi kernel images
+
 
 # The toolchain to use. arm-none-eabi works, but there does exist 
 # arm-bcm2708-linux-gnueabi.
 ARMGNU ?= arm-none-eabi
 
-# The intermediate directory for compiled object files.
-BUILD = build/
-
-# The directory in which source files are stored.
+#source folder
 SOURCE = source/
 
-# The name of the output file to generate.
+#intermediate folder
+BUILD = build/
+
+#final folder
+KERNEL = kernel/
+
+#output kernel file
 TARGET = kernel.img
 
-# The name of the assembler listing file to generate.
+#assembler listing file generated
 LIST = kernel.list
 
-# The name of the map file to generate.
+#map file to generate
 MAP = kernel.map
 
-# The name of the linker script to use.
+#linker script to use
 LINKER = kernel.ld
 
-# The names of all object files that must be generated. Deduced from the 
-# assembly code files in source.
+#the name of the files to be compiled
 OBJECTS := $(patsubst $(SOURCE)%.s,$(BUILD)%.o,$(wildcard $(SOURCE)*.s))
 
-# Rule to make everything.
-all: $(TARGET) $(LIST)
+all: $(KERNEL) $(TARGET) $(LIST)
 
-# Rule to remake everything. Does not include clean.
 rebuild: all
 
-# Rule to make the listing file.
+#rule to make listing file
 $(LIST) : $(BUILD)output.elf
-	$(ARMGNU)-objdump -d $(BUILD)output.elf > $(LIST)
+	$(ARMGNU)-objdump -d $(BUILD)output.elf > $(KERNEL)$(LIST)
 
-# Rule to make the image file.
+#rule to make image file
 $(TARGET) : $(BUILD)output.elf
-	$(ARMGNU)-objcopy $(BUILD)output.elf -O binary $(TARGET) 
+	$(ARMGNU)-objcopy $(BUILD)output.elf -O binary $(KERNEL)$(TARGET) 
 
-# Rule to make the elf file.
+#rule to make elf files
 $(BUILD)output.elf : $(OBJECTS) $(LINKER)
-	$(ARMGNU)-ld --no-undefined $(OBJECTS) -Map $(MAP) -o $(BUILD)output.elf -T $(LINKER)
+	$(ARMGNU)-ld --no-undefined $(OBJECTS) -Map $(KERNEL)$(MAP) -o $(BUILD)output.elf -T $(LINKER)
 
-# Rule to make the object files.
+#rule to make object files
 $(BUILD)%.o: $(SOURCE)%.s $(BUILD)
 	$(ARMGNU)-as -I $(SOURCE) $< -o $@
 
 $(BUILD):
 	mkdir $@
 
-# Rule to clean files.
+$(KERNEL):
+	mkdir $@
+
 clean : 
 	-rm -rf $(BUILD)
-	-rm -f $(TARGET)
-	-rm -f $(LIST)
-	-rm -f $(MAP)
+	-rm -rf $(KERNEL)
