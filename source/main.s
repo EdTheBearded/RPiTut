@@ -22,13 +22,13 @@ main:
 	.unreq pinNum
 	.unreq pinVal
 	blink_loop$:
-		push 	{r0, r1}
-		add	sp, sp, #-8
+		stmfd sp!, {r0, r1}
 		bl 	SetGpio
+		
 		ldr	r0, =0xF4240 @0xF4240 = 1000000d
 		bl	SystemWait
-		add 	sp, sp, #8
-		pop 	{r0, r1}
-		eor	r1, r1, #1
+		
+		ldmfd sp!, {r0, r1}
+		eor	r1, r1, #1 @led on/off
 		b 	blink_loop$
 

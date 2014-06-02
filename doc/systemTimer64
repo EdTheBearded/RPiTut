@@ -4,11 +4,11 @@ registers to compare:  r4 r3
 registers with values: r1 r0
 
 r1 - r4:
-  > fim (bpl)
-  < loop (bmi)
+  > fim (bhi)
+  < loop (blo)
   = continua (beq não precisa)
 
 r0 - r3:
-  < loop (bmi)
+  < loop (blo)
   >= fim (bcs não precisa)
   

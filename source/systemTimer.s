@@ -35,14 +35,14 @@ SystemWait64:
 	mov r4, r1
 	mov r3, r0
 	bl GetTimeStamp
-	add r3, r0, r3 @r4 and r4 will store the final time
-	add r4, r1, r4
+	add r4, r1, r4 @r4 and r4 will store the final time
+	add r3, r0, r3
 	SystemWait_loop64$:
 		bl GetTimeStamp
 		cmp r1, r4
-		bmi SystemWait_loop64$
-		bpl SystemWait_fim64$
+		blo SystemWait_loop64$
+		bhi SystemWait_fim64$
 		cmp r0, r3
-		bmi SystemWait_loop64$
+		blo SystemWait_loop64$
 	SystemWait_fim64$:
 	ldmfd sp!, {r4, pc}
